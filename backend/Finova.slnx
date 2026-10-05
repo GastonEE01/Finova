@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Finova.API/Finova.API.csproj" />
+  <Project Path="Finova.Application/Finova.Application.csproj" />
+  <Project Path="Finova.Domain/Finova.Domain.csproj" />
+  <Project Path="Finova.Infrastructure/Finova.Infrastructure.csproj" />
+</Solution>
