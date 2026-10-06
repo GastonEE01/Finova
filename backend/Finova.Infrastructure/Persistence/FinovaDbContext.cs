@@ -11,6 +11,8 @@ public class FinovaDbContext : DbContext
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Movement> Movements => Set<Movement>();
+    public DbSet<Budget> Budgets => Set<Budget>();
+    public DbSet<SavingGoal> SavingGoals => Set<SavingGoal>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -63,6 +65,42 @@ public class FinovaDbContext : DbContext
              .WithMany(c => c.Movements)
              .HasForeignKey(m => m.CategoryId)
              .OnDelete(DeleteBehavior.SetNull);
+            e.HasIndex(m => m.GoalId);
+            e.HasOne(m => m.SavingGoal)
+             .WithMany(g => g.Contributions)
+             .HasForeignKey(m => m.GoalId)
+             .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Budget>(e =>
+        {
+            e.HasKey(b => b.Id);
+            e.Property(b => b.Amount).IsRequired().HasPrecision(18, 2);
+            e.Property(b => b.Currency).IsRequired().HasMaxLength(3);
+            e.HasIndex(b => new { b.UserId, b.CategoryId, b.Year, b.Month, b.Currency }).IsUnique();
+            e.HasIndex(b => new { b.UserId, b.Year, b.Month });
+            e.HasOne(b => b.User)
+             .WithMany(u => u.Budgets)
+             .HasForeignKey(b => b.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(b => b.Category)
+             .WithMany(c => c.Budgets)
+             .HasForeignKey(b => b.CategoryId)
+             .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SavingGoal>(e =>
+        {
+            e.HasKey(g => g.Id);
+            e.Property(g => g.Name).IsRequired().HasMaxLength(100);
+            e.Property(g => g.TargetAmount).IsRequired().HasPrecision(18, 2);
+            e.Property(g => g.TargetDate).IsRequired();
+            e.Property(g => g.CreatedAt).IsRequired();
+            e.HasIndex(g => g.UserId);
+            e.HasOne(g => g.User)
+             .WithMany(u => u.SavingGoals)
+             .HasForeignKey(g => g.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

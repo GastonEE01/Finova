@@ -29,8 +29,14 @@ export default function Home() {
         <Typography variant="body1" color="text.secondary">
           {email ? `Sesión: ${email}` : "Cargando..."}
         </Typography>
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", justifyContent: "center" }}>
+          <Button variant="contained" href="/dashboard">Dashboard</Button>
           <Button variant="contained" href="/cuentas">Mis cuentas</Button>
+          <Button variant="contained" href="/movimientos/nuevo">Nuevo ingreso</Button>
+          <Button variant="contained" href="/movimientos/nuevo-gasto">Nuevo gasto</Button>
+          <Button variant="contained" href="/movimientos">Historial</Button>
+          <Button variant="contained" href="/presupuestos">Presupuestos</Button>
+          <Button variant="contained" href="/metas">Metas de ahorro</Button>
           <Button variant="outlined" onClick={handleLogout}>Cerrar sesión</Button>
         </Box>
       </Box>

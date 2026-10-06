@@ -24,6 +24,10 @@ builder.Services.AddDbContext<FinovaDbContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IMovementService, MovementService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<ISavingGoalService, SavingGoalService>();
 
 // Application Insights queda registrado solo si configurás su connection string:
 // builder.Services.AddApplicationInsightsTelemetry();

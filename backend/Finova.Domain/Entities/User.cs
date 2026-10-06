@@ -9,4 +9,6 @@ public class User
 
     public List<Account> Accounts { get; set; } = new();
     public List<Category> Categories { get; set; } = new();
+    public List<Budget> Budgets { get; set; } = new();
+    public List<SavingGoal> SavingGoals { get; set; } = new();
 }

@@ -17,6 +17,17 @@ Máximo ~50 líneas. Mantener solo información que siga siendo relevante.
 - Todavía no hay endpoints de movimientos.
 - Ítem 1 (registro/login) completo: pantallas front + back, cierre de sesión del lado cliente.
 - Ítem 2 (cuentas): back (crear/listar con saldo calculado) + front (/cuentas) listo.
+- Ítem 3 (ingresar dinero) implementado: MovementsController (POST/GET), MovementService, DTOs, CategoriesController, página /movimientos/nuevo.
+- Ítem 4 (registrar gastos) implementado siguiendo SDD: spec/plan/tasks en specs/004-registrar-gastos, MovementService con obligatoriedad de categoría+descripción en Expense, página /movimientos/nuevo-gasto.
+- Ítem 5 (historial) implementado y validado: GET /api/movements/history con filtros (fecha/cuenta/categoría/tipo) y saldo resultante por fila; página /movimientos.
+- Categorías del sistema: 15 predefinidas (UserId null) vía migración SystemCategories; gasto con categoría opcional (descripción sigue obligatoria); validaciones aceptan sistema o propias; specs 004/009/010 y AGENTS.md actualizados.
+- Ítem 6 (dashboard) implementado y verificado: GET /api/dashboard (saldos por moneda, ingresos/gastos del mes calendario UTC, últimos 5) + página /dashboard + botón en home; builds backend y frontend OK.
+- Ítem V2.1 (gráficos, spec 007) implementado: 3 endpoints GET /api/dashboard/{expenses-by-category,income-vs-expenses,balance-evolution}?currency= (decimal, UTC, aislamiento por usuario, 400 sin moneda) + sección "Gráficos" en /dashboard con selector de moneda y 3 componentes MUI X Charts v9 (torta/barras si >8, barras 6 meses, línea saldo acumulado con arrastre); builds backend y frontend OK.
+- Ítem V2.2 (comparaciones, spec 008) implementado: endpoint agregador GET /api/dashboard/comparisons?currency= (mes actual vs. anterior con variación % nullable, top 5 con %, evolución 6 meses con ceros; decimal, UTC, aislamiento por usuario) + sección "Comparaciones" en /dashboard (tarjetas mes vs. anterior, torta top 5, barras evolución) reutilizando selector de moneda; builds backend y frontend OK.
+- Ítem V2.3 (presupuestos, spec 009) implementado y verificado: entidad Budget + migración AddBudgets (solo CREATE TABLE, aplicada en Neon) + BudgetService (spent del historial, umbrales 80/100, PUT solo monto) + BudgetsController + página /presupuestos; smoke test OK (duplicado→400, monto 0→400, Acercandose con 83.33%, ajeno→404, 401).
+- Ítem V2.4 (metas, spec 010) implementado y verificado: entidad SavingGoal + GoalId nullable en Movement (SetNull) + migración AddSavingGoalsWithContributionLink (aplicada en Neon) + SavingGoalService (progreso derivado, En curso/Cumplida/Vencida, aporte = gasto "Aporte a meta {nombre}") + SavingGoalsController (api/savinggoals) + página /metas; smoke test OK (fecha pasada→400, aporte descuenta saldo y figura en historial, eliminar desvincula sin alterar saldos, 401/404).
+- Repo publicado en GitHub: https://github.com/GastonEE01/Finova (privado, branch master).
+- `gh` CLI instalado; auth vía navegador. Secretos Neon/JWT en `dotnet user-secrets`, no commiteados.
 
 ## Decisiones
 

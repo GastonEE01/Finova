@@ -48,6 +48,45 @@ namespace Finova.Infrastructure.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("Finova.Domain.Entities.Budget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId", "Year", "Month");
+
+                    b.HasIndex("UserId", "CategoryId", "Year", "Month", "Currency")
+                        .IsUnique();
+
+                    b.ToTable("Budgets");
+                });
+
             modelBuilder.Entity("Finova.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -62,7 +101,7 @@ namespace Finova.Infrastructure.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -95,6 +134,9 @@ namespace Finova.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<Guid?>("GoalId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -106,7 +148,40 @@ namespace Finova.Infrastructure.Migrations
 
                     b.HasIndex("Date");
 
+                    b.HasIndex("GoalId");
+
                     b.ToTable("Movements");
+                });
+
+            modelBuilder.Entity("Finova.Domain.Entities.SavingGoal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("TargetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("TargetDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SavingGoals");
                 });
 
             modelBuilder.Entity("Finova.Domain.Entities.User", b =>
@@ -146,13 +221,31 @@ namespace Finova.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Finova.Domain.Entities.Budget", b =>
+                {
+                    b.HasOne("Finova.Domain.Entities.Category", "Category")
+                        .WithMany("Budgets")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Finova.Domain.Entities.User", "User")
+                        .WithMany("Budgets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Finova.Domain.Entities.Category", b =>
                 {
                     b.HasOne("Finova.Domain.Entities.User", "User")
                         .WithMany("Categories")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -170,9 +263,27 @@ namespace Finova.Infrastructure.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Finova.Domain.Entities.SavingGoal", "SavingGoal")
+                        .WithMany("Contributions")
+                        .HasForeignKey("GoalId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Account");
 
                     b.Navigation("Category");
+
+                    b.Navigation("SavingGoal");
+                });
+
+            modelBuilder.Entity("Finova.Domain.Entities.SavingGoal", b =>
+                {
+                    b.HasOne("Finova.Domain.Entities.User", "User")
+                        .WithMany("SavingGoals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Finova.Domain.Entities.Account", b =>
@@ -182,14 +293,25 @@ namespace Finova.Infrastructure.Migrations
 
             modelBuilder.Entity("Finova.Domain.Entities.Category", b =>
                 {
+                    b.Navigation("Budgets");
+
                     b.Navigation("Movements");
+                });
+
+            modelBuilder.Entity("Finova.Domain.Entities.SavingGoal", b =>
+                {
+                    b.Navigation("Contributions");
                 });
 
             modelBuilder.Entity("Finova.Domain.Entities.User", b =>
                 {
                     b.Navigation("Accounts");
 
+                    b.Navigation("Budgets");
+
                     b.Navigation("Categories");
+
+                    b.Navigation("SavingGoals");
                 });
 #pragma warning restore 612, 618
         }
