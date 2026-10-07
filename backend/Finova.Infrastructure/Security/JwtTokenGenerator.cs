@@ -6,7 +6,7 @@ using Finova.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Finova.Infrastructure.Services;
+namespace Finova.Infrastructure.Security;
 
 public class JwtTokenGenerator : IJwtTokenGenerator
 {

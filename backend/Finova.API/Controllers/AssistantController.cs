@@ -34,7 +34,7 @@ public class AssistantController : ControllerBase
         }
         catch (AssistantUnavailableException)
         {
-            return StatusCode(503, new { message = "Asistente no disponible, intentá más tarde" });
+            return StatusCode(503, new { mensaje = "Asistente no disponible, intentá más tarde" });
         }
     }
 

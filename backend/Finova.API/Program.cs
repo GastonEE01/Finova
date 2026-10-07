@@ -3,7 +3,7 @@ using Finova.Application.Interfaces;
 using Finova.Application.UseCases;
 using Finova.Infrastructure.Persistence;
 using Finova.Infrastructure.Repositories;
-using Finova.Infrastructure.Services;
+using Finova.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

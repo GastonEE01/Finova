@@ -28,19 +28,23 @@ public class MovementRepository : IMovementRepository
             .Include(m => m.Category)
             .ToListAsync();
 
-    public Task<decimal> SumExpensesAsync(Guid userId, Guid categoryId, DateTime start, DateTime end, string currency) =>
-        _context.Movements
+    public async Task<decimal> SumExpensesAsync(Guid userId, Guid categoryId, DateTime start, DateTime end, string currency)
+    {
+        var total = await _context.Movements
             .Where(m => m.Account.UserId == userId
                 && m.CategoryId == categoryId
                 && m.Type == MovementType.Expense
                 && m.Date >= start && m.Date < end
                 && m.Account.Currency == currency)
-            .SumAsync(m => (decimal?)m.Amount)
-            .ContinueWith(t => t.Result ?? 0);
+            .SumAsync(m => (decimal?)m.Amount);
+        return total ?? 0;
+    }
 
-    public Task<decimal> SumByGoalAsync(Guid goalId) =>
-        _context.Movements
+    public async Task<decimal> SumByGoalAsync(Guid goalId)
+    {
+        var total = await _context.Movements
             .Where(m => m.GoalId == goalId)
-            .SumAsync(m => (decimal?)m.Amount)
-            .ContinueWith(t => t.Result ?? 0);
+            .SumAsync(m => (decimal?)m.Amount);
+        return total ?? 0;
+    }
 }

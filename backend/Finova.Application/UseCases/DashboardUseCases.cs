@@ -47,7 +47,9 @@ public class GetDashboardUseCase
             })
             .ToList();
 
-        var monthMovements = (await _movements.ListByUserWithDetailsAsync(userId))
+        var allMovements = await _movements.ListByUserWithDetailsAsync(userId);
+
+        var monthMovements = allMovements
             .Where(m => m.Date.Year == now.Year && m.Date.Month == now.Month)
             .ToList();
 
@@ -63,7 +65,7 @@ public class GetDashboardUseCase
             .Select(g => new CurrencyTotal { Currency = g.Key, Amount = g.Sum(x => x.Amount) })
             .ToList();
 
-        var recent = (await _movements.ListByUserWithDetailsAsync(userId))
+        var recent = allMovements
             .OrderByDescending(m => m.Date)
             .ThenByDescending(m => m.Id)
             .Take(5)
