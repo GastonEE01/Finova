@@ -55,10 +55,15 @@ builder.Services.AddScoped<DeleteSavingGoalUseCase>();
 builder.Services.AddScoped<AddGoalContributionUseCase>();
 builder.Services.AddScoped<AskAssistantUseCase>();
 builder.Services.AddScoped<ListCategoriesUseCase>();
-builder.Services.AddHttpClient<IChatClient, OllamaChatClient>(client =>
+builder.Services.AddHttpClient<OllamaChatClient>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(100);
 });
+builder.Services.AddHttpClient<GeminiChatClient>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(100);
+});
+builder.Services.AddScoped<IChatClient, AiChatClientFactory>();
 
 // Application Insights queda registrado solo si configurás su connection string:
 // builder.Services.AddApplicationInsightsTelemetry();

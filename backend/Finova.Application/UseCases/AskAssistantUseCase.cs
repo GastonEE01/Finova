@@ -55,7 +55,7 @@ public class AskAssistantUseCase
         }
         catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
         {
-            throw new AssistantUnavailableException("Ollama no disponible", ex);
+            throw new AssistantUnavailableException("Proveedor IA no disponible", ex);
         }
     }
 

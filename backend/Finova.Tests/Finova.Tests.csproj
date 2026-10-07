@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Finova.Application\Finova.Application.csproj" />
     <ProjectReference Include="..\Finova.Domain\Finova.Domain.csproj" />
+    <ProjectReference Include="..\Finova.Infrastructure\Finova.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
