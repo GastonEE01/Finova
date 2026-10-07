@@ -3,4 +3,5 @@
   <Project Path="Finova.Application/Finova.Application.csproj" />
   <Project Path="Finova.Domain/Finova.Domain.csproj" />
   <Project Path="Finova.Infrastructure/Finova.Infrastructure.csproj" />
+  <Project Path="Finova.Tests/Finova.Tests.csproj" />
 </Solution>

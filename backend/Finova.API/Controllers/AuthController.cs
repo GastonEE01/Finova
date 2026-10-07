@@ -9,11 +9,15 @@ namespace Finova.API.Controllers;
 [Authorize]
 public class AuthController : ControllerBase
 {
-    private readonly Finova.Application.Interfaces.IAuthService _authService;
+    private readonly Finova.Application.UseCases.RegisterUserUseCase _register;
+    private readonly Finova.Application.UseCases.LoginUserUseCase _login;
 
-    public AuthController(Finova.Application.Interfaces.IAuthService authService)
+    public AuthController(
+        Finova.Application.UseCases.RegisterUserUseCase register,
+        Finova.Application.UseCases.LoginUserUseCase login)
     {
-        _authService = authService;
+        _register = register;
+        _login = login;
     }
 
     [AllowAnonymous]
@@ -22,7 +26,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var response = await _authService.RegisterAsync(request);
+            var response = await _register.ExecuteAsync(request);
             return Ok(response);
         }
         catch (InvalidOperationException ex)
@@ -37,7 +41,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var response = await _authService.LoginAsync(request);
+            var response = await _login.ExecuteAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException)

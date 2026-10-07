@@ -1,5 +1,5 @@
 using Finova.Application.DTOs;
-using Finova.Application.Interfaces;
+using Finova.Application.UseCases;
 using Finova.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,17 +11,24 @@ namespace Finova.API.Controllers;
 [Authorize]
 public class MovementsController : ControllerBase
 {
-    private readonly IMovementService _movementService;
+    private readonly CreateMovementUseCase _create;
+    private readonly ListMovementsUseCase _list;
+    private readonly GetMovementHistoryUseCase _history;
 
-    public MovementsController(IMovementService movementService)
+    public MovementsController(
+        CreateMovementUseCase create,
+        ListMovementsUseCase list,
+        GetMovementHistoryUseCase history)
     {
-        _movementService = movementService;
+        _create = create;
+        _list = list;
+        _history = history;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var movements = await _movementService.GetAllByUserAsync(GetUserId());
+        var movements = await _list.ExecuteAsync(GetUserId());
         return Ok(movements);
     }
 
@@ -30,7 +37,7 @@ public class MovementsController : ControllerBase
     {
         try
         {
-            var history = await _movementService.GetHistoryAsync(GetUserId(), from, to, accountId, categoryId, type);
+            var history = await _history.ExecuteAsync(GetUserId(), from, to, accountId, categoryId, type);
             return Ok(history);
         }
         catch (ArgumentException ex)
@@ -44,7 +51,7 @@ public class MovementsController : ControllerBase
     {
         try
         {
-            var movement = await _movementService.CreateAsync(GetUserId(), request);
+            var movement = await _create.ExecuteAsync(GetUserId(), request);
             return CreatedAtAction(nameof(GetAll), new { id = movement.Id }, movement);
         }
         catch (KeyNotFoundException)

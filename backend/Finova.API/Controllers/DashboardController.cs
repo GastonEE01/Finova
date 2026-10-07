@@ -1,4 +1,4 @@
-using Finova.Application.Interfaces;
+using Finova.Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,17 +9,30 @@ namespace Finova.API.Controllers;
 [Authorize]
 public class DashboardController : ControllerBase
 {
-    private readonly IDashboardService _dashboardService;
+    private readonly GetDashboardUseCase _get;
+    private readonly GetExpensesByCategoryUseCase _byCategory;
+    private readonly GetIncomeVsExpensesUseCase _incomeVsExpenses;
+    private readonly GetBalanceEvolutionUseCase _evolution;
+    private readonly GetComparisonsUseCase _comparisons;
 
-    public DashboardController(IDashboardService dashboardService)
+    public DashboardController(
+        GetDashboardUseCase get,
+        GetExpensesByCategoryUseCase byCategory,
+        GetIncomeVsExpensesUseCase incomeVsExpenses,
+        GetBalanceEvolutionUseCase evolution,
+        GetComparisonsUseCase comparisons)
     {
-        _dashboardService = dashboardService;
+        _get = get;
+        _byCategory = byCategory;
+        _incomeVsExpenses = incomeVsExpenses;
+        _evolution = evolution;
+        _comparisons = comparisons;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var dashboard = await _dashboardService.GetAsync(GetUserId());
+        var dashboard = await _get.ExecuteAsync(GetUserId());
         return Ok(dashboard);
     }
 
@@ -28,7 +41,7 @@ public class DashboardController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(currency))
             return BadRequest("Debe indicar la moneda.");
-        var result = await _dashboardService.GetExpensesByCategoryAsync(GetUserId(), currency.Trim().ToUpper());
+        var result = await _byCategory.ExecuteAsync(GetUserId(), currency.Trim().ToUpper());
         return Ok(result);
     }
 
@@ -37,7 +50,7 @@ public class DashboardController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(currency))
             return BadRequest("Debe indicar la moneda.");
-        var result = await _dashboardService.GetIncomeVsExpensesAsync(GetUserId(), currency.Trim().ToUpper());
+        var result = await _incomeVsExpenses.ExecuteAsync(GetUserId(), currency.Trim().ToUpper());
         return Ok(result);
     }
 
@@ -46,7 +59,7 @@ public class DashboardController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(currency))
             return BadRequest("Debe indicar la moneda.");
-        var result = await _dashboardService.GetBalanceEvolutionAsync(GetUserId(), currency.Trim().ToUpper());
+        var result = await _evolution.ExecuteAsync(GetUserId(), currency.Trim().ToUpper());
         return Ok(result);
     }
 
@@ -55,7 +68,7 @@ public class DashboardController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(currency))
             return BadRequest("Debe indicar la moneda.");
-        var result = await _dashboardService.GetComparisonsAsync(GetUserId(), currency.Trim().ToUpper());
+        var result = await _comparisons.ExecuteAsync(GetUserId(), currency.Trim().ToUpper());
         return Ok(result);
     }
 

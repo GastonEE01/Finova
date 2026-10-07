@@ -1,5 +1,5 @@
 using Finova.Application.DTOs;
-using Finova.Application.Interfaces;
+using Finova.Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +10,21 @@ namespace Finova.API.Controllers;
 [Authorize]
 public class BudgetsController : ControllerBase
 {
-    private readonly IBudgetService _budgetService;
+    private readonly GetBudgetsByMonthUseCase _list;
+    private readonly CreateBudgetUseCase _create;
+    private readonly UpdateBudgetUseCase _update;
+    private readonly DeleteBudgetUseCase _delete;
 
-    public BudgetsController(IBudgetService budgetService)
+    public BudgetsController(
+        GetBudgetsByMonthUseCase list,
+        CreateBudgetUseCase create,
+        UpdateBudgetUseCase update,
+        DeleteBudgetUseCase delete)
     {
-        _budgetService = budgetService;
+        _list = list;
+        _create = create;
+        _update = update;
+        _delete = delete;
     }
 
     [HttpGet]
@@ -23,7 +33,7 @@ public class BudgetsController : ControllerBase
         try
         {
             var now = DateTime.UtcNow;
-            var budgets = await _budgetService.GetByMonthAsync(GetUserId(), year ?? now.Year, month ?? now.Month);
+            var budgets = await _list.ExecuteAsync(GetUserId(), year ?? now.Year, month ?? now.Month);
             return Ok(budgets);
         }
         catch (ArgumentException ex)
@@ -37,7 +47,7 @@ public class BudgetsController : ControllerBase
     {
         try
         {
-            var budget = await _budgetService.CreateAsync(GetUserId(), request);
+            var budget = await _create.ExecuteAsync(GetUserId(), request);
             return CreatedAtAction(nameof(GetByMonth), new { year = budget.Year, month = budget.Month }, budget);
         }
         catch (ArgumentException ex)
@@ -51,7 +61,7 @@ public class BudgetsController : ControllerBase
     {
         try
         {
-            var budget = await _budgetService.UpdateAsync(GetUserId(), id, request);
+            var budget = await _update.ExecuteAsync(GetUserId(), id, request);
             return Ok(budget);
         }
         catch (KeyNotFoundException)
@@ -69,7 +79,7 @@ public class BudgetsController : ControllerBase
     {
         try
         {
-            await _budgetService.DeleteAsync(GetUserId(), id);
+            await _delete.ExecuteAsync(GetUserId(), id);
             return NoContent();
         }
         catch (KeyNotFoundException)

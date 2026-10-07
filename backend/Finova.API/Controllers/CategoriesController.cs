@@ -1,8 +1,7 @@
+using Finova.Application.UseCases;
 using Finova.Domain.Enums;
-using Finova.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Finova.API.Controllers;
 
@@ -11,11 +10,11 @@ namespace Finova.API.Controllers;
 [Authorize]
 public class CategoriesController : ControllerBase
 {
-    private readonly Finova.Infrastructure.Persistence.FinovaDbContext _context;
+    private readonly ListCategoriesUseCase _list;
 
-    public CategoriesController(FinovaDbContext context)
+    public CategoriesController(ListCategoriesUseCase list)
     {
-        _context = context;
+        _list = list;
     }
 
     [HttpGet]
@@ -25,14 +24,7 @@ public class CategoriesController : ControllerBase
         if (!Guid.TryParse(sub, out var userId))
             return Unauthorized();
 
-        var query = _context.Categories.Where(c => c.UserId == userId || c.UserId == null);
-        if (type.HasValue)
-            query = query.Where(c => c.Type == type.Value);
-
-        var categories = await query.OrderBy(c => c.Name)
-            .Select(c => new { c.Id, c.Name, c.Type })
-            .ToListAsync();
-
+        var categories = await _list.ExecuteAsync(userId, type);
         return Ok(categories);
     }
 }

@@ -1,5 +1,5 @@
 using Finova.Application.DTOs;
-using Finova.Application.Interfaces;
+using Finova.Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +10,30 @@ namespace Finova.API.Controllers;
 [Authorize]
 public class SavingGoalsController : ControllerBase
 {
-    private readonly ISavingGoalService _goalService;
+    private readonly ListSavingGoalsUseCase _list;
+    private readonly CreateSavingGoalUseCase _create;
+    private readonly UpdateSavingGoalUseCase _update;
+    private readonly DeleteSavingGoalUseCase _delete;
+    private readonly AddGoalContributionUseCase _contribute;
 
-    public SavingGoalsController(ISavingGoalService goalService)
+    public SavingGoalsController(
+        ListSavingGoalsUseCase list,
+        CreateSavingGoalUseCase create,
+        UpdateSavingGoalUseCase update,
+        DeleteSavingGoalUseCase delete,
+        AddGoalContributionUseCase contribute)
     {
-        _goalService = goalService;
+        _list = list;
+        _create = create;
+        _update = update;
+        _delete = delete;
+        _contribute = contribute;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var goals = await _goalService.GetAllAsync(GetUserId());
+        var goals = await _list.ExecuteAsync(GetUserId());
         return Ok(goals);
     }
 
@@ -29,7 +42,7 @@ public class SavingGoalsController : ControllerBase
     {
         try
         {
-            var goal = await _goalService.CreateAsync(GetUserId(), request);
+            var goal = await _create.ExecuteAsync(GetUserId(), request);
             return CreatedAtAction(nameof(GetAll), new { id = goal.Id }, goal);
         }
         catch (ArgumentException ex)
@@ -43,7 +56,7 @@ public class SavingGoalsController : ControllerBase
     {
         try
         {
-            var goal = await _goalService.UpdateAsync(GetUserId(), id, request);
+            var goal = await _update.ExecuteAsync(GetUserId(), id, request);
             return Ok(goal);
         }
         catch (KeyNotFoundException)
@@ -61,7 +74,7 @@ public class SavingGoalsController : ControllerBase
     {
         try
         {
-            await _goalService.DeleteAsync(GetUserId(), id);
+            await _delete.ExecuteAsync(GetUserId(), id);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -75,7 +88,7 @@ public class SavingGoalsController : ControllerBase
     {
         try
         {
-            var goal = await _goalService.AddContributionAsync(GetUserId(), id, request);
+            var goal = await _contribute.ExecuteAsync(GetUserId(), id, request);
             return Ok(goal);
         }
         catch (KeyNotFoundException ex)
