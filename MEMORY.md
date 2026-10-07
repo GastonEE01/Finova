@@ -33,6 +33,8 @@ Máximo ~50 líneas. Mantener solo información que siga siendo relevante.
 - Diseño "Bosque y moneda" aplicado a gráficos: paleta propia por modo vía useChartPalette (esmeralda/rojo/oro + rampa categórica), tortas como dona con esquinas redondeadas, barras redondeadas, línea con área suavizada, tooltips en formato es-AR.
 - Landing pública /bienvenida (hero Ink + maqueta del panel en código, funciones, 3 pasos, FAQ, CTA final; layout con metadata SEO); sin imágenes IA por balance $0 en belt.
 - AppShell: AppBar (Finova, nav desktop, +Nuevo, toggle tema, avatar+email, salir) + bottom nav móvil (Panel, Movimientos, [+] chooser, Cuentas, Ayuda); páginas protegidas en grupo (app); / redirige a /dashboard (Panel con saludo).
+- Cuentas: combo de 29 monedas (CURRENCIES); historial: filtro de categoría con sufijo (ingreso/gasto) para distinguir "Otros" duplicado.
+- Limpieza de datos: 11 categorías de usuario duplicadas eliminadas en Neon (movimientos reasignados a las del sistema, sin pérdida).
 - `gh` CLI instalado; auth vía navegador. Secretos Neon/JWT en `dotnet user-secrets`, no commiteados.
 
 ## Decisiones

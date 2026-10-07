@@ -74,7 +74,7 @@ export default function MovimientosPage() {
           <InputLabel>Categoría</InputLabel>
           <Select value={categoryId} label="Categoría" onChange={(e) => setCategoryId(e.target.value)}>
             <MenuItem value="">Todas</MenuItem>
-            {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+            {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.name} ({c.type === 1 ? "ingreso" : "gasto"})</MenuItem>)}
           </Select>
         </FormControl>
 

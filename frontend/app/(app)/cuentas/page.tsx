@@ -1,9 +1,10 @@
 "use client";
 
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../lib/auth";
+import { CURRENCIES } from "../../lib/currencies";
 
 type Account = { id: string; name: string; currency: string; balance: number };
 
@@ -64,7 +65,12 @@ export default function CuentasPage() {
         <DialogTitle>Nueva cuenta</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
           <TextField label="Nombre" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
-          <TextField label="Moneda (ej. ARS)" value={currency} onChange={(e) => setCurrency(e.target.value)} fullWidth />
+          <FormControl fullWidth>
+            <InputLabel>Moneda</InputLabel>
+            <Select value={currency} label="Moneda" onChange={(e) => setCurrency(e.target.value)}>
+              {CURRENCIES.map((c) => <MenuItem key={c.code} value={c.code}>{c.code} — {c.name}</MenuItem>)}
+            </Select>
+          </FormControl>
           {error && <Typography color="error">{error}</Typography>}
         </DialogContent>
         <DialogActions>
