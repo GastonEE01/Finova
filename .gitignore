@@ -22,3 +22,4 @@ secrets.json
 Thumbs.db
 .vs/
 .vscode/
+serviceDependencies.json
