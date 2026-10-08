@@ -4,7 +4,7 @@ Aplicación fullstack de gestión de finanzas personales donde se pueden registr
 ## 🔗 Enlaces del Proyecto
 DEMO Frontend (Vercel): https://finova-coral.vercel.app/
 
-API Backend (Azure): https://finovaapi-e2gse6bfhce5akep.brazilsouth-01.azurewebsites.net/api/dashboard
+API Backend (Azure): https://finovaapi-e2gse6bfhce5akep.brazilsouth-01.azurewebsites.net/swagger
 
 ## Funcionalidades:
 * Registro e inicio de sesión con JWT
@@ -32,7 +32,6 @@ API Backend (Azure): https://finovaapi-e2gse6bfhce5akep.brazilsouth-01.azurewebs
 ### Backend:
 * .NET (ASP.NET Core Web API)
 * Entity Framework Core
-* Clean Architecture + UseCases + Repositories
 * xUnit + Moq + FluentAssertions (69 tests)
 
 ### Base de Datos
