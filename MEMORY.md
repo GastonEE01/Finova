@@ -32,7 +32,7 @@ Máximo ~50 líneas. Mantener solo información que siga siendo relevante.
 - Repo publicado en GitHub: https://github.com/GastonEE01/Finova (privado, branch master).
 - Pulidos review 012 aplicados: eliminado UnitTest1.cs placeholder, SumAsync con await en MovementRepository, GetDashboardUseCase con una sola carga de movimientos, JwtTokenGenerator movido a Infrastructure/Security; build 0 errores, 69 tests en verde.
 - Diseño "Bosque y moneda" aplicado a gráficos: paleta propia por modo vía useChartPalette (esmeralda/rojo/oro + rampa categórica), tortas como dona con esquinas redondeadas, barras redondeadas, línea con área suavizada, tooltips en formato es-AR.
-- Landing pública /bienvenida (hero Ink + maqueta del panel en código, funciones, 3 pasos, FAQ, CTA final; layout con metadata SEO); sin imágenes IA por balance $0 en belt.
+- Limpieza ESLint: patrón de fetch diferido con cancelación en 11 archivos (0 errores, build Vercel no afectado).
 - AppShell: AppBar (Finova, nav desktop, +Nuevo, toggle tema, avatar+email, salir) + bottom nav móvil (Panel, Movimientos, [+] chooser, Cuentas, Ayuda); páginas protegidas en grupo (app); / redirige a /dashboard (Panel con saludo).
 - Cuentas: combo de 29 monedas (CURRENCIES); historial: filtro de categoría con sufijo (ingreso/gasto) para distinguir "Otros" duplicado.
 - Limpieza de datos: 11 categorías de usuario duplicadas eliminadas en Neon (movimientos reasignados a las del sistema, sin pérdida).

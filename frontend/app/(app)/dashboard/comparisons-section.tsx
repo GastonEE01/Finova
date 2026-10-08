@@ -48,16 +48,22 @@ export default function ComparisonsSection({ currency }: { currency: string }) {
 
   useEffect(() => {
     if (!getToken()) { router.push("/login"); return; }
-    setData(null);
-    setError("");
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      setData(null);
+      setError("");
+    });
     apiFetch(`/api/dashboard/comparisons?currency=${encodeURIComponent(currency)}`)
       .then(async (res) => {
+        if (cancelled) return;
         if (res.status === 401) { router.push("/login"); return; }
         if (res.ok) setData(await res.json());
         else if (res.status === 400) setError("Debe indicar la moneda.");
         else setError("No se pudieron cargar las comparaciones.");
       })
-      .catch(() => setError("No se pudieron cargar las comparaciones."));
+      .catch(() => { if (!cancelled) setError("No se pudieron cargar las comparaciones."); });
+    return () => { cancelled = true; };
   }, [currency, router]);
 
   return (

@@ -3,7 +3,7 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { setToken } from "../lib/auth";
+import { setToken, API_URL } from "../lib/auth";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function RegistroPage() {
 
   const handleRegistro = async () => {
     setError("");
-    const res = await fetch("http://localhost:5171/api/auth/register", {
+    const res = await fetch(`${API_URL}/api/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

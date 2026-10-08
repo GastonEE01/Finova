@@ -3,7 +3,7 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { setToken } from "../lib/auth";
+import { setToken, API_URL } from "../lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     setError("");
-    const res = await fetch("http://localhost:5171/api/auth/login", {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

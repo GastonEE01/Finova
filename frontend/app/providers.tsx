@@ -1,7 +1,7 @@
 "use client";
 
 import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 type Mode = "light" | "dark";
 
@@ -69,12 +69,10 @@ function buildTheme(mode: Mode) {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<Mode>("light");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("finova_mode");
-    if (saved === "light" || saved === "dark") setMode(saved);
-  }, []);
+  const [mode, setMode] = useState<Mode>(() => {
+    if (typeof window === "undefined") return "light";
+    return localStorage.getItem("finova_mode") === "dark" ? "dark" : "light";
+  });
 
   const toggle = useCallback(() => {
     setMode((m) => {

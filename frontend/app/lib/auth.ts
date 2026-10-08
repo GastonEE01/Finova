@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:5171";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5171";
 
 export function getToken() {
   if (typeof window === "undefined") return null;

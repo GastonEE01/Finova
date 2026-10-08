@@ -8,18 +8,19 @@ import BienvenidaPage from "./bienvenida/page";
 export default function Home() {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
-  const [logged, setLogged] = useState(false);
 
   useEffect(() => {
     if (getToken()) {
       router.replace("/dashboard");
-    } else {
-      setLogged(false);
-      setChecked(true);
+      return;
     }
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (!cancelled) setChecked(true);
+    });
+    return () => { cancelled = true; };
   }, [router]);
 
   if (!checked) return null;
-  if (logged) return null;
   return <BienvenidaPage />;
 }

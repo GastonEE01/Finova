@@ -12,12 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+var frontendOrigin = builder.Configuration["Frontend:Origin"];
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod());
+    {
+        policy.AllowAnyHeader().AllowAnyMethod();
+        if (string.IsNullOrWhiteSpace(frontendOrigin))
+            policy.AllowAnyOrigin();
+        else
+            policy.WithOrigins(frontendOrigin);
+    });
 });
 
 builder.Services.AddDbContext<FinovaDbContext>(options =>

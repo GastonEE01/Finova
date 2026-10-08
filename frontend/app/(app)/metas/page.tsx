@@ -2,7 +2,7 @@
 
 import { Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../lib/auth";
 
 type Goal = { id: string; name: string; targetAmount: number; progress: number; remaining: number; percent: number; status: string; targetDate: string; createdAt: string };
@@ -29,26 +29,31 @@ export default function MetasPage() {
   const [contribAmount, setContribAmount] = useState("");
   const [contribError, setContribError] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const res = await apiFetch("/api/savinggoals");
     if (res.status === 401) { router.push("/login"); return; }
     if (res.ok) setGoals(await res.json());
-  };
+  }, [router]);
 
-  const loadHelpers = async () => {
+  const loadHelpers = useCallback(async () => {
     const [accRes, catRes] = await Promise.all([
       apiFetch("/api/accounts"),
       apiFetch("/api/categories?type=2"),
     ]);
     if (accRes.ok) setAccounts(await accRes.json());
     if (catRes.ok) setCategories(await catRes.json());
-  };
+  }, []);
 
   useEffect(() => {
     if (!getToken()) { router.push("/login"); return; }
-    load();
-    loadHelpers();
-  }, [router]);
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      load();
+      loadHelpers();
+    });
+    return () => { cancelled = true; };
+  }, [router, load, loadHelpers]);
 
   const openCreate = () => {
     setEditing(null); setName(""); setTargetAmount(""); setTargetDate(""); setError(""); setOpen(true);

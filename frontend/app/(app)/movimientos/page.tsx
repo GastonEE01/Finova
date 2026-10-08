@@ -44,8 +44,14 @@ export default function MovimientosPage() {
   }, [from, to, accountId, categoryId, type, router]);
 
   useEffect(() => {
-    if (!getToken()) router.push("/login");
-    else { loadFilters(); loadHistory(); }
+    if (!getToken()) { router.push("/login"); return; }
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      loadFilters();
+      loadHistory();
+    });
+    return () => { cancelled = true; };
   }, [router, loadFilters, loadHistory]);
 
   const clearFilters = () => {

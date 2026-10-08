@@ -2,7 +2,7 @@
 
 import { Box, Button, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../lib/auth";
 
 type Budget = { id: string; categoryId: string; categoryName: string; year: number; month: number; amount: number; currency: string; spent: number; remaining: number; percent: number; status: string };
@@ -25,23 +25,27 @@ export default function PresupuestosPage() {
   const [currency, setCurrency] = useState("ARS");
   const [error, setError] = useState("");
 
-  const load = async (y: number, m: number) => {
+  const load = useCallback(async (y: number, m: number) => {
     const res = await apiFetch(`/api/budgets?year=${y}&month=${m}`);
     if (res.status === 401) { router.push("/login"); return; }
     if (res.ok) setBudgets(await res.json());
-  };
+  }, [router]);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     const res = await apiFetch("/api/categories?type=2");
     if (res.ok) setCategories(await res.json());
-  };
+  }, []);
 
   useEffect(() => {
     if (!getToken()) { router.push("/login"); return; }
-    load(year, month);
-    loadCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      load(year, month);
+      loadCategories();
+    });
+    return () => { cancelled = true; };
+  }, [router, load, loadCategories, year, month]);
 
   const refresh = () => load(year, month);
 

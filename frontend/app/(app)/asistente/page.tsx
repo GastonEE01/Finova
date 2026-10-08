@@ -7,6 +7,38 @@ import { apiFetch, getToken } from "../../lib/auth";
 
 type Message = { role: "user" | "assistant"; text: string };
 
+function RichText({ text }: { text: string }) {
+  const parts = text.split("**");
+  return (
+    <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+      {parts.map((p, i) =>
+        i % 2 === 1 ? <b key={i}>{p}</b> : <span key={i}>{p}</span>
+      )}
+    </Typography>
+  );
+}
+
+function TypingDots() {
+  return (
+    <Box sx={{ display: "flex", gap: 0.5, p: 1.5, alignSelf: "flex-start", bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 2 }}>
+      {[0, 1, 2].map((i) => (
+        <Box
+          key={i}
+          sx={{
+            width: 8, height: 8, borderRadius: "50%", bgcolor: "primary.main",
+            animation: "typing 1.2s infinite",
+            animationDelay: `${i * 0.2}s`,
+            "@keyframes typing": {
+              "0%, 60%, 100%": { opacity: 0.25, transform: "translateY(0)" },
+              "30%": { opacity: 1, transform: "translateY(-4px)" },
+            },
+          }}
+        />
+      ))}
+    </Box>
+  );
+}
+
 const SUGERENCIAS = [
   "¿cuánto gasté este mes?",
   "¿en qué gasté más?",
@@ -81,14 +113,15 @@ export default function AsistentePage() {
                 maxWidth: "85%",
                 p: 1.5,
                 borderRadius: 2,
-                bgcolor: m.role === "user" ? "primary.main" : "#f0f0f0",
-                color: m.role === "user" ? "white" : "inherit",
+                ...(m.role === "user"
+                  ? { bgcolor: "primary.main", color: "#fff" }
+                  : { bgcolor: "background.paper", border: 1, borderColor: "divider" }),
               }}
             >
-              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>{m.text}</Typography>
+              <RichText text={m.text} />
             </Box>
           ))}
-          {loading && <Typography color="text.secondary">Pensando…</Typography>}
+          {loading && <TypingDots />}
         </Box>
 
         <Box sx={{ display: "flex", gap: 1 }}>

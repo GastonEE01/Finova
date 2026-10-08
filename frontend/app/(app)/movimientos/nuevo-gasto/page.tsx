@@ -2,7 +2,7 @@
 
 import { Box, Button, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../../lib/auth";
 
 type Account = { id: string; name: string; currency: string };
@@ -22,7 +22,7 @@ export default function NuevoGastoPage() {
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const [acc, cat, mov] = await Promise.all([
       apiFetch("/api/accounts"),
       apiFetch("/api/categories?type=2"),
@@ -32,12 +32,14 @@ export default function NuevoGastoPage() {
     if (acc.ok) setAccounts(await acc.json());
     if (cat.ok) setCategories(await cat.json());
     if (mov.ok) setMovements(await mov.json());
-  };
+  }, [router]);
 
   useEffect(() => {
-    if (!getToken()) router.push("/login");
-    else load();
-  }, [router]);
+    if (!getToken()) { router.push("/login"); return; }
+    let cancelled = false;
+    Promise.resolve().then(() => { if (!cancelled) load(); });
+    return () => { cancelled = true; };
+  }, [router, load]);
 
   const handleCreate = async () => {
     setError(""); setOk("");

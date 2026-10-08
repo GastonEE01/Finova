@@ -20,15 +20,21 @@ export default function IncomeVsExpensesChart({ currency }: { currency: string }
 
   useEffect(() => {
     if (!getToken()) { router.push("/login"); return; }
-    setData(null);
-    setError("");
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      setData(null);
+      setError("");
+    });
     apiFetch(`/api/dashboard/income-vs-expenses?currency=${encodeURIComponent(currency)}`)
       .then(async (res) => {
+        if (cancelled) return;
         if (res.status === 401) { router.push("/login"); return; }
         if (res.ok) setData(await res.json());
         else setError("No se pudo cargar el gráfico.");
       })
-      .catch(() => setError("No se pudo cargar el gráfico."));
+      .catch(() => { if (!cancelled) setError("No se pudo cargar el gráfico."); });
+    return () => { cancelled = true; };
   }, [currency, router]);
 
   const hasData = data && data.months.some((m) => m.income > 0 || m.expense > 0);

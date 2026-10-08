@@ -22,7 +22,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [chooser, setChooser] = useState(false);
 
   useEffect(() => {
-    setEmail(getEmail());
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (!cancelled) setEmail(getEmail());
+    });
+    return () => { cancelled = true; };
   }, [path]);
 
   const go = (href: string) => router.push(href);
