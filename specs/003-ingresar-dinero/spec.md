@@ -28,5 +28,6 @@
 - `POST /api/movements` con `Type = Income` crea el movimiento y devuelve el movimiento creado.
 - `GET /api/accounts/{id}` refleja el saldo + monto del ingreso.
 - `GET /api/movements` (o el listado del usuario) incluye el movimiento con tipo "Ingreso", monto, fecha, categoría y descripción.
-- El front muestra la página (ej. `/movimientos/nuevo`) con campos de monto, fecha, cuenta, categoría (opcional) y descripción, y tras registrar muestra mensaje de éxito y lista de movimientos.
+- El front muestra un **modal único de nuevo movimiento** (abierto desde el botón "+" del header o el "+" central de la barra móvil) con combo **Tipo (Ingreso/Gasto)**, campos de monto, fecha, cuenta, categoría (opcional) y descripción; tras registrar muestra mensaje de éxito sin cerrar el modal.
+- La página `/movimientos/nuevo` fue reemplazada por el modal (ya no existe).
 - Se valida autorización: no se puede usar una cuenta o categoría de otro usuario.

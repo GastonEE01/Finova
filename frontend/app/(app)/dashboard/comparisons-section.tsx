@@ -7,6 +7,8 @@ import { apiFetch, getToken } from "../../lib/auth";
 import ExpenseEvolutionChart from "./expense-evolution-chart";
 import TopCategoriesChart, { TopCategory } from "./top-categories-chart";
 
+const MONTH_NAMES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
 type MonthTotal = { year: number; month: number; income: number; expense: number };
 type EvolutionItem = { year: number; month: number; expense: number };
 type Comparisons = {
@@ -41,7 +43,7 @@ function MonthCard({ title, current, previous, variation, currency }: {
   );
 }
 
-export default function ComparisonsSection({ currency }: { currency: string }) {
+export default function ComparisonsSection({ currency, year, month }: { currency: string; year: number; month: number }) {
   const router = useRouter();
   const [data, setData] = useState<Comparisons | null>(null);
   const [error, setError] = useState("");
@@ -54,7 +56,7 @@ export default function ComparisonsSection({ currency }: { currency: string }) {
       setData(null);
       setError("");
     });
-    apiFetch(`/api/dashboard/comparisons?currency=${encodeURIComponent(currency)}`)
+    apiFetch(`/api/dashboard/comparisons?currency=${encodeURIComponent(currency)}&year=${year}&month=${month}`)
       .then(async (res) => {
         if (cancelled) return;
         if (res.status === 401) { router.push("/login"); return; }
@@ -64,7 +66,7 @@ export default function ComparisonsSection({ currency }: { currency: string }) {
       })
       .catch(() => { if (!cancelled) setError("No se pudieron cargar las comparaciones."); });
     return () => { cancelled = true; };
-  }, [currency, router]);
+  }, [currency, year, month, router]);
 
   return (
     <Box>
@@ -74,7 +76,9 @@ export default function ComparisonsSection({ currency }: { currency: string }) {
       {data && (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 1 }}>
           <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Este mes vs. mes anterior</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              {MONTH_NAMES[month - 1]} vs. mes anterior
+            </Typography>
             <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5, mt: 1 }}>
               <MonthCard
                 title="Ingresos"

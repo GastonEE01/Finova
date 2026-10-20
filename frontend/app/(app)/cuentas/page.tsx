@@ -1,8 +1,9 @@
 "use client";
 
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { FiCreditCard, FiPlus } from "react-icons/fi";
 import { apiFetch, getToken } from "../../lib/auth";
 import { CURRENCIES } from "../../lib/currencies";
 
@@ -53,18 +54,64 @@ export default function CuentasPage() {
     <Container maxWidth="sm">
       <Box sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography variant="h5">Mis cuentas</Typography>
-        <Button variant="contained" onClick={() => setOpen(true)}>Nueva cuenta</Button>
-        <List>
+        <Button variant="contained" startIcon={<FiPlus />} onClick={() => setOpen(true)}>Nueva cuenta</Button>
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
           {accounts.map((a) => (
-            <ListItem key={a.id}>
-              <ListItemText
-                primary={a.name}
-                secondary={`${a.currency} · Saldo: ${a.balance.toFixed(2)}`}
-              />
-            </ListItem>
+            <Box
+              key={a.id}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                p: 2,
+                borderRadius: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                bgcolor: "background.paper",
+                transition: "box-shadow 0.2s, border-color 0.2s",
+                "&:hover": { boxShadow: 2, borderColor: "primary.main" },
+              }}
+            >
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: "primary.main",
+                  color: "#fff",
+                  flexShrink: 0,
+                }}
+              >
+                <FiCreditCard size={22} />
+              </Box>
+
+              <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {a.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {a.currency}
+                </Typography>
+              </Box>
+
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                  color: a.balance < 0 ? "error.main" : "text.primary",
+                }}
+              >
+                {a.balance.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </Typography>
+            </Box>
           ))}
           {accounts.length === 0 && <Typography color="text.secondary">No tenés cuentas todavía.</Typography>}
-        </List>
+        </Box>
       </Box>
 
       <Dialog open={open} onClose={() => setOpen(false)}>

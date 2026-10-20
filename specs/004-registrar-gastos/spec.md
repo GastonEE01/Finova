@@ -47,6 +47,7 @@ Permitir que cada usuario registre sus gastos asociados a una cuenta, disminuyen
 - El listado de movimientos muestra el gasto con tipo, monto, fecha, categoría (o "Sin categoría") y descripción.
 - Los casos de error devuelven los códigos esperados.
 - La UI es usable en móvil y muestra mensajes claros de éxito y error.
+- El gasto se registra desde el mismo modal unificado de nuevo movimiento (combo Tipo = Gasto), donde la descripción se marca como obligatoria.
 
 ## Dudas abiertas
 - (ninguna pendiente)

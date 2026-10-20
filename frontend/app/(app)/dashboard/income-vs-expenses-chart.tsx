@@ -1,20 +1,23 @@
 "use client";
 
-import { Box, Typography } from "@mui/material";
-import { BarChart } from "@mui/x-charts";
+import { Box, Typography, useTheme } from "@mui/material";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../lib/auth";
-import { useChartPalette, fmtMoney } from "../../components/chartPalette";
+import { useChartPalette } from "../../components/chartPalette";
 
 const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
 type MonthItem = { year: number; month: number; income: number; expense: number };
 type Response = { currency: string; months: MonthItem[] };
 
-export default function IncomeVsExpensesChart({ currency }: { currency: string }) {
+const tooltipStyle = { borderRadius: 8, fontSize: 13 };
+
+export default function IncomeVsExpensesChart({ currency, year, month }: { currency: string; year: number; month: number }) {
   const router = useRouter();
   const palette = useChartPalette();
+  const { palette: mui } = useTheme();
   const [data, setData] = useState<Response | null>(null);
   const [error, setError] = useState("");
 
@@ -26,7 +29,7 @@ export default function IncomeVsExpensesChart({ currency }: { currency: string }
       setData(null);
       setError("");
     });
-    apiFetch(`/api/dashboard/income-vs-expenses?currency=${encodeURIComponent(currency)}`)
+    apiFetch(`/api/dashboard/income-vs-expenses?currency=${encodeURIComponent(currency)}&year=${year}&month=${month}`)
       .then(async (res) => {
         if (cancelled) return;
         if (res.status === 401) { router.push("/login"); return; }
@@ -35,9 +38,17 @@ export default function IncomeVsExpensesChart({ currency }: { currency: string }
       })
       .catch(() => { if (!cancelled) setError("No se pudo cargar el gráfico."); });
     return () => { cancelled = true; };
-  }, [currency, router]);
+  }, [currency, year, month, router]);
 
   const hasData = data && data.months.some((m) => m.income > 0 || m.expense > 0);
+  const fmt = (v: number) => `${v.toLocaleString("es-AR", { maximumFractionDigits: 2 })} ${currency}`;
+  const chartData = data
+    ? data.months.map((m) => ({
+        label: MONTH_LABELS[m.month - 1],
+        Ingresos: m.income,
+        Gastos: m.expense,
+      }))
+    : [];
 
   return (
     <Box>
@@ -48,15 +59,21 @@ export default function IncomeVsExpensesChart({ currency }: { currency: string }
         <Typography color="text.secondary">Sin movimientos en el período.</Typography>
       )}
       {data && hasData && (
-        <BarChart
-          height={280}
-          borderRadius={6}
-          xAxis={[{ scaleType: "band", data: data.months.map((m) => MONTH_LABELS[m.month - 1]) }]}
-          series={[
-            { data: data.months.map((m) => m.income), label: "Ingresos", color: palette.income, valueFormatter: fmtMoney(currency) },
-            { data: data.months.map((m) => m.expense), label: "Gastos", color: palette.expense, valueFormatter: fmtMoney(currency) },
-          ]}
-        />
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData} margin={{ top: 8, right: 8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={mui.divider} vertical={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 12, fill: mui.text.secondary }} />
+            <YAxis tick={{ fontSize: 12, fill: mui.text.secondary }} width={70} />
+            <Tooltip
+              formatter={(v, name) => [fmt(Number(v)), name]}
+              contentStyle={tooltipStyle}
+              cursor={{ fill: mui.action.hover, opacity: 0.4 }}
+            />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="Ingresos" fill={palette.income} radius={[6, 6, 0, 0]} />
+            <Bar dataKey="Gastos" fill={palette.expense} radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       )}
     </Box>
   );

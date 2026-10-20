@@ -44,7 +44,10 @@ Permitir al usuario consultar en lenguaje natural su situación financiera ("¿c
 - Con usuario sin datos no inventa. Sin token → 401. Sin key del proveedor → error claro de configuración.
 
 ## Dudas abiertas
-- (resueltas: motor Ollama local; alcance las 5 preguntas; UI página /asistente; sin datos avisa sin inventar)
+- (resueltas: motor Ollama local; alcance las 5 preguntas; UI como chat flotante accesible desde cualquier pantalla; sin datos avisa sin inventar)
+
+## Cambios de UI (aprobados)
+- La página `/asistente` fue reemplazada por un botón flotante (FAB) abajo a la derecha presente en todas las pantallas autenticadas; al tocarlo se abre el chat en un modal, con el mismo comportamiento y reglas de la spec.
 
 ## Estado
 - Spec aprobada, lista para planificación.

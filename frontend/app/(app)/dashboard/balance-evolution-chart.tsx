@@ -1,18 +1,21 @@
 "use client";
 
-import { Box, Typography } from "@mui/material";
-import { LineChart } from "@mui/x-charts";
+import { Box, Typography, useTheme } from "@mui/material";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch, getToken } from "../../lib/auth";
-import { useChartPalette, fmtMoney } from "../../components/chartPalette";
+import { useChartPalette } from "../../components/chartPalette";
 
 type PointItem = { date: string; balance: number };
 type Response = { currency: string; points: PointItem[] };
 
-export default function BalanceEvolutionChart({ currency }: { currency: string }) {
+const tooltipStyle = { borderRadius: 8, fontSize: 13 };
+
+export default function BalanceEvolutionChart({ currency, year, month }: { currency: string; year: number; month: number }) {
   const router = useRouter();
   const palette = useChartPalette();
+  const { palette: mui } = useTheme();
   const [data, setData] = useState<Response | null>(null);
   const [error, setError] = useState("");
 
@@ -24,7 +27,7 @@ export default function BalanceEvolutionChart({ currency }: { currency: string }
       setData(null);
       setError("");
     });
-    apiFetch(`/api/dashboard/balance-evolution?currency=${encodeURIComponent(currency)}`)
+    apiFetch(`/api/dashboard/balance-evolution?currency=${encodeURIComponent(currency)}&year=${year}&month=${month}`)
       .then(async (res) => {
         if (cancelled) return;
         if (res.status === 401) { router.push("/login"); return; }
@@ -33,7 +36,10 @@ export default function BalanceEvolutionChart({ currency }: { currency: string }
       })
       .catch(() => { if (!cancelled) setError("No se pudo cargar el gráfico."); });
     return () => { cancelled = true; };
-  }, [currency, router]);
+  }, [currency, year, month, router]);
+
+  const fmt = (v: number) => `${v.toLocaleString("es-AR", { maximumFractionDigits: 2 })} ${currency}`;
+  const chartData = data ? data.points.map((p) => ({ dia: new Date(p.date).getDate(), Saldo: p.balance })) : [];
 
   return (
     <Box>
@@ -44,14 +50,31 @@ export default function BalanceEvolutionChart({ currency }: { currency: string }
         <Typography color="text.secondary">Sin movimientos en el período.</Typography>
       )}
       {data && data.points.length > 0 && (
-        <LineChart
-          height={280}
-          xAxis={[{
-            scaleType: "point",
-            data: data.points.map((p) => new Date(p.date).getDate()),
-          }]}
-          series={[{ data: data.points.map((p) => p.balance), label: `Saldo (${currency})`, color: palette.income, area: true, showMark: false, curve: "monotoneX", valueFormatter: fmtMoney(currency) }]}
-        />
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={chartData} margin={{ top: 8, right: 8 }}>
+            <defs>
+              <linearGradient id="gradSaldo" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={palette.income} stopOpacity={0.45} />
+                <stop offset="100%" stopColor={palette.income} stopOpacity={0.02} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={mui.divider} vertical={false} />
+            <XAxis dataKey="dia" tick={{ fontSize: 12, fill: mui.text.secondary }} />
+            <YAxis tick={{ fontSize: 12, fill: mui.text.secondary }} width={70} />
+            <Tooltip
+              formatter={(v) => [fmt(Number(v)), "Saldo"]}
+              labelFormatter={(label) => `Día ${label}`}
+              contentStyle={tooltipStyle}
+            />
+            <Area
+              type="monotone"
+              dataKey="Saldo"
+              stroke={palette.income}
+              strokeWidth={2.5}
+              fill="url(#gradSaldo)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       )}
     </Box>
   );

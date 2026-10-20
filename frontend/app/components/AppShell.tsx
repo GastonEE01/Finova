@@ -1,16 +1,18 @@
 "use client";
 
-import { AppBar, Avatar, BottomNavigation, BottomNavigationAction, Box, Button, Dialog, DialogContent, DialogTitle, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Avatar, BottomNavigation, BottomNavigationAction, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiCreditCard, FiHome, FiList, FiLogOut, FiMessageCircle, FiMoon, FiPlus, FiSun } from "react-icons/fi";
+import { FiCreditCard, FiHome, FiList, FiLogOut, FiMoon, FiPlus, FiSun } from "react-icons/fi";
 import { useColorMode } from "../providers";
 import { clearToken, getEmail } from "../lib/auth";
+import Image from "next/image";
+import NuevoMovimientoDialog from "./NuevoMovimientoDialog";
+import AsistenteChat, { AsistenteFab } from "./AsistenteChat";
 
 function tabOf(path: string) {
   if (path.startsWith("/movimientos")) return "movimientos";
   if (path.startsWith("/cuentas")) return "cuentas";
-  if (path.startsWith("/asistente")) return "asistente";
   return "panel";
 }
 
@@ -19,7 +21,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const { toggle, mode } = useColorMode();
   const [email, setEmail] = useState<string | null>(null);
-  const [chooser, setChooser] = useState(false);
+  const [nuevoOpen, setNuevoOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,29 +42,36 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <AppBar position="sticky" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Toolbar sx={{ gap: 1 }}>
-          <Typography
-            variant="h6"
-            sx={{ fontFamily: '"Sora", sans-serif', fontWeight: 700, cursor: "pointer", mr: 2 }}
+          <Box
+            component="button"
+            type="button"
+            aria-label="Ir al panel"
             onClick={() => go("/dashboard")}
+            sx={{ p: 0, border: "none", bg: "transparent", cursor: "pointer", display: "flex", lineHeight: 0 }}
           >
-            Finova
-          </Typography>
-
+            <Image
+              src="/Logo.jpg"
+              alt="Finova"
+              width={64}
+              height={64}
+              priority
+              style={{ borderRadius: 14, width: "auto", height: "clamp(48px, 8vw, 72px)" }}
+            />
+          </Box>
           <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, flexGrow: 1 }}>
             <Button color={tabOf(path) === "panel" ? "primary" : "inherit"} onClick={() => go("/dashboard")}>Panel</Button>
             <Button color={tabOf(path) === "movimientos" ? "primary" : "inherit"} onClick={() => go("/movimientos")}>Movimientos</Button>
             <Button color={tabOf(path) === "cuentas" ? "primary" : "inherit"} onClick={() => go("/cuentas")}>Cuentas</Button>
-            <Button color={tabOf(path) === "asistente" ? "primary" : "inherit"} onClick={() => go("/asistente")}>Asistente</Button>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "block", md: "none" } }} />
 
           <Button
             variant="contained"
             startIcon={<FiPlus />}
-            onClick={() => setChooser(true)}
+            onClick={() => setNuevoOpen(true)}
             sx={{ display: { xs: "none", md: "inline-flex" } }}
           >
-            Nuevo
+            Nuevo 
           </Button>
 
           <IconButton onClick={toggle} aria-label="Cambiar tema" color="inherit">
@@ -106,23 +116,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <FiPlus size={24} color="#fff" />
             </Avatar>
           }
-          onClick={() => setChooser(true)}
+          onClick={() => setNuevoOpen(true)}
         />
         <BottomNavigationAction label="Cuentas" value="cuentas" icon={<FiCreditCard size={22} />} onClick={() => go("/cuentas")} />
-        <BottomNavigationAction label="Ayuda" value="asistente" icon={<FiMessageCircle size={22} />} onClick={() => go("/asistente")} />
       </BottomNavigation>
 
-      <Dialog open={chooser} onClose={() => setChooser(false)}>
-        <DialogTitle>Nuevo movimiento</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 260, pb: 3 }}>
-          <Button variant="contained" color="primary" onClick={() => { setChooser(false); go("/movimientos/nuevo"); }}>
-            Nuevo ingreso
-          </Button>
-          <Button variant="contained" color="error" onClick={() => { setChooser(false); go("/movimientos/nuevo-gasto"); }}>
-            Nuevo gasto
-          </Button>
-        </DialogContent>
-      </Dialog>
+      <AsistenteFab onClick={() => setChatOpen(true)} />
+      <NuevoMovimientoDialog open={nuevoOpen} onClose={() => setNuevoOpen(false)} />
+      <AsistenteChat open={chatOpen} onClose={() => setChatOpen(false)} />
     </Box>
   );
 }

@@ -47,7 +47,11 @@ Dar al usuario visualizaciones de sus finanzas: en qué gasta, cómo se comparan
 - UI responsive con mensajes claros de vacío y error.
 
 ## Dudas abiertas
-- (resueltas: períodos fijos — gastos del mes, comparativa 6 meses, evolución diaria del mes; selector de moneda; gráficos como secciones de `/dashboard`; librería MUI X Charts)
+- (resueltas: períodos — gastos del mes, comparativa 6 meses, evolución diaria del mes; selector de moneda; gráficos como tarjetas en grid de `/dashboard`; librería Recharts)
+
+## Cambios aprobados
+- Selector de mes (últimos 12 meses) en `/dashboard`: los endpoints de gráficos aceptan `year`/`month` opcionales (sin parámetros = mes actual, compatible con lo existente).
+- Gráficos migrados de MUI X Charts a Recharts; organización en grid responsivo de tarjetas (2 columnas desktop, 1 columna móvil).
 
 ## Estado
 - Spec aprobada, lista para planificación.

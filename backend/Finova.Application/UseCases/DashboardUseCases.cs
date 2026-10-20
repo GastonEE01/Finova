@@ -30,10 +30,12 @@ public class GetDashboardUseCase
         _movements = movements;
     }
 
-    public async Task<DashboardResponse> ExecuteAsync(Guid userId)
+    public async Task<DashboardResponse> ExecuteAsync(Guid userId, int? year = null, int? month = null)
     {
         var now = DateTime.UtcNow;
-        var from = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var selYear = year ?? now.Year;
+        var selMonth = month ?? now.Month;
+        var from = new DateTime(selYear, selMonth, 1, 0, 0, 0, DateTimeKind.Utc);
 
         var accounts = await _accounts.ListByUserWithMovementsAsync(userId);
 
@@ -50,7 +52,7 @@ public class GetDashboardUseCase
         var allMovements = await _movements.ListByUserWithDetailsAsync(userId);
 
         var monthMovements = allMovements
-            .Where(m => m.Date.Year == now.Year && m.Date.Month == now.Month)
+            .Where(m => m.Date.Year == selYear && m.Date.Month == selMonth)
             .ToList();
 
         var totalIncome = monthMovements
@@ -92,7 +94,7 @@ public class GetDashboardUseCase
             TotalExpenses = totalExpenses,
             RecentMovements = recent,
             PeriodFrom = from,
-            PeriodTo = now
+            PeriodTo = selYear == now.Year && selMonth == now.Month ? now : from.AddMonths(1).AddSeconds(-1)
         };
     }
 }
@@ -106,16 +108,18 @@ public class GetExpensesByCategoryUseCase
         _movements = movements;
     }
 
-    public async Task<ExpensesByCategoryResponse> ExecuteAsync(Guid userId, string currency)
+    public async Task<ExpensesByCategoryResponse> ExecuteAsync(Guid userId, string currency, int? year = null, int? month = null)
     {
         var now = DateTime.UtcNow;
-        var from = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var selYear = year ?? now.Year;
+        var selMonth = month ?? now.Month;
+        var from = new DateTime(selYear, selMonth, 1, 0, 0, 0, DateTimeKind.Utc);
 
         var items = (await _movements.ListByUserWithDetailsAsync(userId))
             .Where(m => m.Account.Currency == currency
                 && m.Type == MovementType.Expense
-                && m.Date.Year == now.Year
-                && m.Date.Month == now.Month)
+                && m.Date.Year == selYear
+                && m.Date.Month == selMonth)
             .GroupBy(m => new { m.CategoryId, CategoryName = m.Category != null ? m.Category.Name : null })
             .Select(g => new CategoryExpenseItem
             {
@@ -130,7 +134,7 @@ public class GetExpensesByCategoryUseCase
         {
             Currency = currency,
             PeriodFrom = from,
-            PeriodTo = now,
+            PeriodTo = selYear == now.Year && selMonth == now.Month ? now : from.AddMonths(1).AddSeconds(-1),
             Items = items
         };
     }
@@ -145,10 +149,12 @@ public class GetIncomeVsExpensesUseCase
         _movements = movements;
     }
 
-    public async Task<IncomeVsExpensesResponse> ExecuteAsync(Guid userId, string currency)
+    public async Task<IncomeVsExpensesResponse> ExecuteAsync(Guid userId, string currency, int? year = null, int? month = null)
     {
         var now = DateTime.UtcNow;
-        var start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-5);
+        var endYear = year ?? now.Year;
+        var endMonth = month ?? now.Month;
+        var start = new DateTime(endYear, endMonth, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-5);
 
         var movements = (await _movements.ListByUserWithDetailsAsync(userId))
             .Where(m => m.Account.Currency == currency && m.Date >= start)
@@ -181,25 +187,29 @@ public class GetBalanceEvolutionUseCase
         _movements = movements;
     }
 
-    public async Task<BalanceEvolutionResponse> ExecuteAsync(Guid userId, string currency)
+    public async Task<BalanceEvolutionResponse> ExecuteAsync(Guid userId, string currency, int? year = null, int? month = null)
     {
         var now = DateTime.UtcNow;
-        var from = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var selYear = year ?? now.Year;
+        var selMonth = month ?? now.Month;
+        var from = new DateTime(selYear, selMonth, 1, 0, 0, 0, DateTimeKind.Utc);
+        var isCurrentMonth = selYear == now.Year && selMonth == now.Month;
+        var lastDay = isCurrentMonth ? now.Day : DateTime.DaysInMonth(selYear, selMonth);
 
         var movements = (await _movements.ListByUserWithDetailsAsync(userId))
-            .Where(m => m.Account.Currency == currency && m.Date <= now)
+            .Where(m => m.Account.Currency == currency)
             .ToList();
 
         var points = new List<BalancePointItem>();
-        for (var day = 1; day <= now.Day; day++)
+        for (var day = 1; day <= lastDay; day++)
         {
-            var cutoff = new DateTime(now.Year, now.Month, day, 23, 59, 59, DateTimeKind.Utc);
+            var cutoff = new DateTime(selYear, selMonth, day, 23, 59, 59, DateTimeKind.Utc);
             var balance = movements
                 .Where(m => m.Date <= cutoff)
                 .Sum(DashboardCalculations.SignedAmount);
             points.Add(new BalancePointItem
             {
-                Date = new DateTime(now.Year, now.Month, day, 0, 0, 0, DateTimeKind.Utc),
+                Date = new DateTime(selYear, selMonth, day, 0, 0, 0, DateTimeKind.Utc),
                 Balance = balance
             });
         }
@@ -208,7 +218,7 @@ public class GetBalanceEvolutionUseCase
         {
             Currency = currency,
             PeriodFrom = from,
-            PeriodTo = now,
+            PeriodTo = isCurrentMonth ? now : from.AddMonths(1).AddSeconds(-1),
             Points = points
         };
     }
@@ -223,10 +233,12 @@ public class GetComparisonsUseCase
         _movements = movements;
     }
 
-    public async Task<ComparisonsResponse> ExecuteAsync(Guid userId, string currency)
+    public async Task<ComparisonsResponse> ExecuteAsync(Guid userId, string currency, int? year = null, int? month = null)
     {
         var now = DateTime.UtcNow;
-        var curStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var curYear = year ?? now.Year;
+        var curMonth = month ?? now.Month;
+        var curStart = new DateTime(curYear, curMonth, 1, 0, 0, 0, DateTimeKind.Utc);
         var prevStart = curStart.AddMonths(-1);
         var evoStart = curStart.AddMonths(-5);
 
@@ -240,10 +252,10 @@ public class GetComparisonsUseCase
 
         var current = new MonthTotalItem
         {
-            Year = now.Year,
-            Month = now.Month,
-            Income = SumByMonth(MovementType.Income, now.Year, now.Month),
-            Expense = SumByMonth(MovementType.Expense, now.Year, now.Month)
+            Year = curYear,
+            Month = curMonth,
+            Income = SumByMonth(MovementType.Income, curYear, curMonth),
+            Expense = SumByMonth(MovementType.Expense, curYear, curMonth)
         };
         var previous = new MonthTotalItem
         {
@@ -254,7 +266,7 @@ public class GetComparisonsUseCase
         };
 
         var currentExpenses = movements
-            .Where(m => m.Type == MovementType.Expense && m.Date.Year == now.Year && m.Date.Month == now.Month)
+            .Where(m => m.Type == MovementType.Expense && m.Date.Year == curYear && m.Date.Month == curMonth)
             .ToList();
         var monthTotal = currentExpenses.Sum(m => m.Amount);
         var top = currentExpenses
