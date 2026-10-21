@@ -39,7 +39,7 @@ Máximo ~50 líneas. Mantener solo información que siga siendo relevante.
 - Cuentas: combo de 29 monedas (CURRENCIES); historial: filtro de categoría con sufijo (ingreso/gasto) para distinguir "Otros" duplicado.
 - Limpieza de datos: 11 categorías de usuario duplicadas eliminadas en Neon (movimientos reasignados a las del sistema, sin pérdida).
 - `gh` CLI instalado; auth vía navegador. Secretos Neon/JWT en `dotnet user-secrets`, no commiteados.
-- Landing /bienvenida: envuelta en su propio ThemeProvider con `lightTheme` fijo (exportado de providers.tsx) + fondo `#F4F6F2` — es independiente del toggle oscuro/claro de la app; responsive: filas de tarjetas se apilan en móvil, h2 con fontSize responsive, links del header ocultos en xs (quedan en el footer), translateY del asistente solo en md, tarjetas con padding completo.
+- Landing /bienvenida: envuelta en su propio ThemeProvider con `darkTheme` fijo (exportado de providers.tsx) + fondo `#030303` — es una landing en modo oscuro fijo, independiente del toggle oscuro/claro de la app; responsive: filas de tarjetas se apilan en móvil, h2 con fontSize responsive, links del header ocultos en xs (quedan en el footer), translateY del asistente solo en md, tarjetas con padding completo.
 - Paquete manager del front: solo npm (pnpm-lock.yaml y pnpm-workspace.yaml eliminados del repo y en .gitignore — causaban ERR_PNPM_OUTDATED_LOCKFILE en Vercel). ESLint ignora `src-tauri/**` (artefactos Rust).
 
 ## Decisiones

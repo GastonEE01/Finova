@@ -14,15 +14,15 @@ import { FiMail } from "react-icons/fi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { lightTheme } from "../providers";
+import { darkTheme } from "../providers";
 
 export default function BienvenidaPage() {
   const router = useRouter();
   const go = (h: string) => router.push(h);
 
   return (
-    <ThemeProvider theme={lightTheme}>
-    <Box sx={{ bgcolor: "#F4F6F2", color: "#12211B", minHeight: "100vh" }}>
+    <ThemeProvider theme={darkTheme}>
+    <Box sx={{ bgcolor: "#030303", color: "#F4F6F2", minHeight: "100vh" }}>
      
     {/* HEADER */}
     <Box

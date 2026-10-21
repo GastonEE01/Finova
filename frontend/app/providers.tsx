@@ -68,9 +68,9 @@ function buildTheme(mode: Mode) {
   });
 }
 
-// Tema fijo en modo claro — lo usa la landing (/bienvenida) para que sea
+// Tema fijo en modo oscuro — lo usa la landing (/bienvenida) para que sea
 // independiente del toggle de modo oscuro/claro de la app.
-export const lightTheme = buildTheme("light");
+export const darkTheme = buildTheme("dark");
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Estado inicial SIEMPRE "light" (igual que el servidor) para evitar error de
