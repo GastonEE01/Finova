@@ -50,12 +50,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             sx={{ p: 0, border: "none", bg: "transparent", cursor: "pointer", display: "flex", lineHeight: 0 }}
           >
             <Image
-              src="/Logo.jpg"
+              src="/Logo.png"
               alt="Finova"
-              width={64}
-              height={64}
+              width={44}
+              height={44}
               priority
-              style={{ borderRadius: 14, width: "auto", height: "clamp(48px, 8vw, 72px)" }}
+              style={{ borderRadius: 10, width: "auto", height: "clamp(36px, 6vw, 48px)" }}
             />
           </Box>
           <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, flexGrow: 1 }}>

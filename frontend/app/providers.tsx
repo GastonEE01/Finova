@@ -20,11 +20,11 @@ const light = {
   rojo: "#C0392B",
   niebla: "#E3E8E3",
 };
-
+//030303
 // Modo oscuro — opuestos
 const dark = {
   ink: "#F4F6F2",
-  paper: "#12211B",
+  paper: "#030303",
   esmeralda: "#3AA586",
   oro: "#C99A2C",
   rojo: "#E06C5B",
