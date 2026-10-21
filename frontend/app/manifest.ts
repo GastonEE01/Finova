@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Gestioná tus finanzas personales con Finova.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#121212",
+    background_color: "#0C0F14",
+    theme_color: "#0C0F14",
     icons: [
       {
         src: "/Finova-512.png",
@@ -22,6 +22,12 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/Finova-192.png",
         sizes: "192x192",
         type: "image/png",
+      },
+      {
+        src: "/Finova-maskable.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
       },
     ],
   };
