@@ -1,7 +1,7 @@
 "use client";
 
 import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type Mode = "light" | "dark";
 
@@ -69,10 +69,19 @@ function buildTheme(mode: Mode) {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<Mode>(() => {
-    if (typeof window === "undefined") return "light";
-    return localStorage.getItem("finova_mode") === "dark" ? "dark" : "light";
-  });
+  // Estado inicial SIEMPRE "light" (igual que el servidor) para evitar error de
+  // hidratación; el modo guardado se aplica después en el cliente.
+  const [mode, setMode] = useState<Mode>("light");
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      const saved = localStorage.getItem("finova_mode");
+      if (saved === "dark" || saved === "light") setMode(saved);
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   const toggle = useCallback(() => {
     setMode((m) => {
