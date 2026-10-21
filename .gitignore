@@ -23,3 +23,5 @@ Thumbs.db
 .vs/
 .vscode/
 serviceDependencies.json
+frontend/pnpm-lock.yaml
+frontend/pnpm-workspace.yaml
