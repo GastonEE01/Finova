@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Container, Typography, Divider, Link } from "@mui/material";
+import { Box, Button, Container, Typography, Divider, Link, ThemeProvider } from "@mui/material";
 import {
   MdAccountBalanceWallet,
   MdReceiptLong,
@@ -14,13 +14,15 @@ import { FiMail } from "react-icons/fi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { lightTheme } from "../providers";
 
 export default function BienvenidaPage() {
   const router = useRouter();
   const go = (h: string) => router.push(h);
 
   return (
-    <Box>
+    <ThemeProvider theme={lightTheme}>
+    <Box sx={{ bgcolor: "#F4F6F2", color: "#12211B", minHeight: "100vh" }}>
      
     {/* HEADER */}
     <Box
@@ -62,15 +64,15 @@ export default function BienvenidaPage() {
               gap: 3,
             }}
           >
-            <Link href="#funcionalidades" underline="none" sx={{ color: "inherit" }}>
+            <Link href="#funcionalidades" underline="none" sx={{ color: "inherit", display: { xs: "none", md: "inline" } }}>
               Funcionalidades
             </Link>
 
-            <Link href="#preguntas-frecuentes" underline="none" sx={{ color: "inherit" }}>
+            <Link href="#preguntas-frecuentes" underline="none" sx={{ color: "inherit", display: { xs: "none", md: "inline" } }}>
               Preguntas frecuentes
             </Link>
 
-            <Link href="#contacto" underline="none" sx={{ color: "inherit" }}>
+            <Link href="#contacto" underline="none" sx={{ color: "inherit", display: { xs: "none", md: "inline" } }}>
               Contacto
             </Link>
 
@@ -193,7 +195,7 @@ export default function BienvenidaPage() {
         >
           NÚCLEO
         </Typography>
-        <Typography variant="h2" color="text.secondary">
+        <Typography variant="h2" color="text.secondary" sx={{ fontSize: { xs: "2rem", md: "3.75rem" } }}>
           Cargá, mirá y sabé <br /> cómo estás parado
         </Typography>
         <Typography variant="body1" sx={{ mb: 3, opacity: 0.85 }}>
@@ -206,7 +208,7 @@ export default function BienvenidaPage() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: { xs: "column", md: "row" },
           gap: 2,
           px: { xs: 2, sm: 4, md: 6 },
         }}
@@ -217,8 +219,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdAccountBalanceWallet size={40} color="green" />
@@ -247,8 +248,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdReceiptLong size={40} color="yellow" />
@@ -275,8 +275,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdFilterList size={40} color="green" />
@@ -303,8 +302,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdDashboard size={40} color="green" />
@@ -340,7 +338,7 @@ export default function BienvenidaPage() {
         >
           PANEL
         </Typography>
-        <Typography variant="h2" color="text.secondary">
+        <Typography variant="h2" color="text.secondary" sx={{ fontSize: { xs: "2rem", md: "3.75rem" } }}>
           Todo lo que importa, <br /> en una sola pantalla
         </Typography>
         <Typography variant="body1" sx={{ mb: 3, opacity: 0.85 }}>
@@ -363,7 +361,7 @@ export default function BienvenidaPage() {
         >
           ANÁLISIS
         </Typography>
-        <Typography variant="h2" color="text.secondary">
+        <Typography variant="h2" color="text.secondary" sx={{ fontSize: { xs: "2rem", md: "3.75rem" } }}>
           Cuando ya hay datos, <br /> Finova los mira por vos
         </Typography>
         <Typography variant="body1" sx={{ mb: 3, opacity: 0.85 }}>
@@ -374,7 +372,7 @@ export default function BienvenidaPage() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: { xs: "column", md: "row" },
           gap: 2,
           px: { xs: 2, sm: 4, md: 6 },
         }}
@@ -384,8 +382,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdDonutSmall size={40} color="green" />
@@ -413,8 +410,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdCompareArrows size={40} color="green" />
@@ -442,8 +438,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdPriceCheck size={40} color="green" />
@@ -471,8 +466,7 @@ export default function BienvenidaPage() {
             background: "#12211B",
             border: "2px solid #2A3B33",
             borderRadius: 3,
-            pt: 3,
-            pl: 3,
+            p: 3,
           }}
         >
           <MdDashboard size={40} color="green" />
@@ -517,7 +511,7 @@ export default function BienvenidaPage() {
                 maxWidth: "600px",
               }}
             />
-            <Box sx={{ minWidth: 0, transform: "translateY(-125px)" }}>
+            <Box sx={{ minWidth: 0, transform: { xs: "none", md: "translateY(-125px)" } }}>
               <Typography
                 variant="h6"
                 sx={{
@@ -564,7 +558,7 @@ export default function BienvenidaPage() {
         >
           CÓMO EMPEZAR
         </Typography>
-        <Typography variant="h2" color="text.secondary">
+        <Typography variant="h2" color="text.secondary" sx={{ fontSize: { xs: "2rem", md: "3.75rem" } }}>
           Tres pasos y ya <br /> estás registrando
         </Typography>
         <Typography variant="body1" sx={{ mb: 3, opacity: 0.85 }}>
@@ -729,7 +723,7 @@ export default function BienvenidaPage() {
         >
           PREGUNTAS FRECUENTES
         </Typography>
-        <Typography variant="h2" color="text.secondary">
+        <Typography variant="h2" color="text.secondary" sx={{ fontSize: { xs: "2rem", md: "3.75rem" } }}>
           Lo que se pregunta <br /> antes de empezar
         </Typography>
 
@@ -956,5 +950,6 @@ export default function BienvenidaPage() {
         </Container>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 }
