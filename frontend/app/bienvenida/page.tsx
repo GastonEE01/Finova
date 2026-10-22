@@ -216,16 +216,7 @@ export default function BienvenidaPage() {
                   usás (banco, Mercado Pago, efectivo) y te muestra cuánto
                   tenés, cuánto entró y en qué se te fue la plata.
                 </Typography>
-                {/* CTA principal */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  sx={{ borderRadius: 3 }}
-                  onClick={() => go("/registro")}
-                >
-                  Pedir acceso
-                </Button>
+              
 
                 {/* Instalación en PC y celular (secundario) */}
                 <Box
@@ -273,7 +264,7 @@ export default function BienvenidaPage() {
                       py: 1.5,
                       "&:hover": {
                         borderColor: "#3AA586",
-                        bgcolor: "rgba(58,165,134,0.08)",
+                        bgcolor: "#1A2A23",
                       },
                     }}
                   >
